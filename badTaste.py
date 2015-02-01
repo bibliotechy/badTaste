@@ -28,6 +28,7 @@ class BadTaste:
                     for pron in pronunciations:
                         badWord = find_best_rhyme(pron, redis)
                         if badWord:
+                            print(badWord)
                             dish = dish.replace(word, badWord.decode('utf-8'))
                             replaceCount += 1
                             break
@@ -38,8 +39,10 @@ class BadTaste:
             return dish.title()
 
         def find_best_rhyme( pronunciation, redis):
+            print("new pron")
             for i in range(len(pronunciation)-1,1,-1):
-                badWord = redis.srandmember(tuple(pronunciation[-i:]))
+                print("trying " + str(i))
+                badWord = redis.srandmember(b":".join(pronunciation[-i:]))
                 if badWord:
                     return badWord
             else:
@@ -50,6 +53,7 @@ class BadTaste:
             self.redis = StrictRedis(host=redis_url, db=1)
         newDish = find_rhyme_in_words(self.dish, self.dishwords,self.redis)
         if newDish.lower() != self.dish.lower():
+            print
             self.get_dish()
             return newDish
         else:
@@ -78,7 +82,7 @@ class BadWords:
             pronunciations = cmudict.dict().get(word,[])
             for pron in pronunciations:
                 for i in range(2,len(pron)):
-                    self.redis.sadd(tuple(pron[-i:]), word)
+                    self.redis.sadd(":".join(pron[-i:]), word)
         # Create multiple entry points for a word, form all but first sound matches to ony last two sounds match
         # For Example:
         # twiddle has a pronunciation: [u'T', u'W', u'IH1', u'D', u'AH0', u'L']
@@ -96,9 +100,9 @@ def print_bad():
         phrase = "Starter: " + dish1 + ", Main: " + dish2
         while len(phrase) > 140:
            phrase = " ".join(phrase.split()[:-1])
-        print(len(phrase))
         print(phrase)
-    except:
+    except Exception as e:
+        print(e)
         print_bad()
 
 if __name__ == "__main__":
