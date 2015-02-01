@@ -93,12 +93,11 @@ def print_bad():
         bt = BadTaste()
         dish1 = bt.get_bad_dish()
         dish2 = bt.get_bad_dish()
-        phrase = "Starter: " + dish1 + ", Main: " + dish2
+        phrase = "Starter: " + dish1 + "\n" + "Main: " + dish2
         while len(phrase) > 140:
            phrase = " ".join(phrase.split()[:-1])
         print(phrase)
     except Exception as e:
-        print(e)
         print_bad()
 
 if __name__ == "__main__":
