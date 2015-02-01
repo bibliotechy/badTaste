@@ -28,7 +28,6 @@ class BadTaste:
                     for pron in pronunciations:
                         badWord = find_best_rhyme(pron, redis)
                         if badWord:
-                            print(badWord)
                             dish = dish.replace(word, badWord.decode('utf-8'))
                             replaceCount += 1
                             break
@@ -39,10 +38,8 @@ class BadTaste:
             return dish.title()
 
         def find_best_rhyme( pronunciation, redis):
-            print("new pron")
             for i in range(len(pronunciation)-1,1,-1):
-                k = ":".join(pronunciation[-i:])
-                badWord = redis.srandmember(bytes(k.encode("utf-8")))
+                badWord = redis.srandmember(bytes(":".join(pronunciation[-i:]).encode("utf-8")))
                 if badWord:
                     return badWord
             else:
@@ -53,7 +50,6 @@ class BadTaste:
             self.redis = StrictRedis(host=redis_url, db=1)
         newDish = find_rhyme_in_words(self.dish, self.dishwords,self.redis)
         if newDish.lower() != self.dish.lower():
-            print
             self.get_dish()
             return newDish
         else:
