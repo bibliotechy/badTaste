@@ -3,7 +3,7 @@ from random import randrange
 from nltk import tokenize
 from nltk.corpus import cmudict
 from redis import StrictRedis
-
+import string
 
 class BadTaste:
 
@@ -35,7 +35,7 @@ class BadTaste:
                         continue
                     else:
                         break
-            return dish.title()
+            return string.capwords(dish)
 
         def find_best_rhyme( pronunciation, redis):
             for i in range(len(pronunciation)-1,1,-1):
@@ -49,7 +49,7 @@ class BadTaste:
             redis_url = "localhost"
             self.redis = StrictRedis(host=redis_url, db=1)
         newDish = find_rhyme_in_words(self.dish, self.dishwords,self.redis)
-        if newDish.lower() != self.dish.lower():
+        if newDish and newDish.lower() != self.dish.lower():
             self.get_dish()
             return newDish
         else:
