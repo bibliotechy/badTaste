@@ -41,8 +41,8 @@ class BadTaste:
         def find_best_rhyme( pronunciation, redis):
             print("new pron")
             for i in range(len(pronunciation)-1,1,-1):
-                print("trying " + str(i))
-                badWord = redis.srandmember(b":".join(pronunciation[-i:]))
+                k = ":".join(pronunciation[-i:])
+                badWord = redis.srandmember(bytes(k.encode("utf-8")))
                 if badWord:
                     return badWord
             else:
